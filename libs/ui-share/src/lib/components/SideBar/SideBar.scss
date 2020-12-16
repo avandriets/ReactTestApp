@@ -1,0 +1,11 @@
+.SideBar {
+  &.collapsed {
+    width: 50px;
+  }
+  &.expanded {
+    width: 250px;
+  }
+  height: calc(100vh - 56px);
+  background: #efeff1;
+  transition: all 0.3s;
+}

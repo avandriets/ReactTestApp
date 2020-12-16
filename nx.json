@@ -29,6 +29,15 @@
     "react-app-e2e": {
       "tags": [],
       "implicitDependencies": ["react-app"]
+    },
+    "dictionaries": {
+      "tags": []
+    },
+    "ui-share": {
+      "tags": []
+    },
+    "ui-products": {
+      "tags": []
     }
   }
 }

@@ -15,7 +15,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@test-react-app/dictionaries": ["libs/dictionaries/src/index.ts"],
+      "@test-react-app/ui-share": ["libs/ui-share/src/index.ts"],
+      "@test-react-app/ui-products": ["libs/ui-products/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
