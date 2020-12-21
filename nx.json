@@ -34,13 +34,22 @@
       "tags": []
     },
     "ui-share": {
-      "tags": []
+      "tags": [
+        "shared"
+      ]
     },
     "ui-products": {
       "tags": []
     },
     "core": {
-      "tags": []
+      "tags": [
+        "shared"
+      ]
+    },
+    "core-store": {
+      "tags": [
+        "shared"
+      ]
     }
   }
 }

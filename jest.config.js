@@ -5,5 +5,6 @@ module.exports = {
     '<rootDir>/libs/ui-share',
     '<rootDir>/libs/ui-products',
     '<rootDir>/libs/core',
+    '<rootDir>/libs/core-store',
   ],
 };

@@ -1,3 +1,1 @@
-import { RootState } from '@test-react-app/core';
-
-export const selectToggle = (state: RootState) => state.sideBarToggle.collapse;
+export const selectToggle = (state: { sideBarToggle: any, products: any }) => state.sideBarToggle.collapse;

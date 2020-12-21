@@ -1,34 +1,14 @@
+import './ProductList.scss';
 import React, { useContext, useEffect, useState } from 'react';
+import { fetchProducts, selectProductIds } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@test-react-app/core';
-import {
-  fetchProducts,
-  Product,
-  selectProductById,
-  selectProductIds,
-} from '../../store';
-import { Link } from 'react-router-dom';
-import { Table } from 'react-bootstrap';
+import { useHistory, useLocation } from 'react-router';
+import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
 import { SortHeader } from '../SortHeader/SortHeader';
 import { SortHeaderContext } from '../../context';
-import { useHistory, useLocation } from 'react-router';
-
-import './ProductList.scss';
+import { Table } from 'react-bootstrap';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { removeFalsyValues } from '@test-react-app/ui-share';
-
-const ProductExcerpt = ({ productId }) => {
-  const product: Product = useSelector((state) => selectProductById(state, productId))
-
-  return (
-    <tr key={product.id}>
-      <td>
-        <Link to={`/products/${product.id}`}>{product.title}</Link>
-      </td>
-      <td>{product.category_id}</td>
-      <td>{product.description}</td>
-    </tr>
-  );
-}
 
 export const ProductList = () => {
 
@@ -48,8 +28,6 @@ export const ProductList = () => {
       direction: direction || null,
     });
 
-    console.log('###', field, params);
-
     const query = new URLSearchParams();
     Object.keys(params).forEach(k => query.set(k, params[k]));
 
@@ -59,8 +37,8 @@ export const ProductList = () => {
   const dispatch = useDispatch();
   const productsIds = useSelector(selectProductIds);
 
-  const productsStatus = useSelector((state: RootState) => state.products.status);
-  const error = useSelector((state: RootState) => state.products.error);
+  const productsStatus = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
+  const error = useSelector((state: { sideBarToggle: any, products: any }) => state.products.error);
 
   let content;
 

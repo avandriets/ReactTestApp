@@ -183,6 +183,27 @@
           }
         }
       }
+    },
+    "core-store": {
+      "root": "libs/core-store",
+      "sourceRoot": "libs/core-store/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/core-store/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/core-store/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
