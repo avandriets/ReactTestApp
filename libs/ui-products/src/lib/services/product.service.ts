@@ -1,12 +1,12 @@
-import axios from 'axios';
 import { Product } from '@test-react-app/ui-products';
+import axios from 'axios';
 
 const baseUrl = process.env.NX_BASE_URL;
 
 async function get(apiEndpoint: string, params: { [key: string]: string }): Promise<{ count: number, rows: Product[] }> {
 
   try {
-    const response = await axios.get<{ count: number, rows: Product[] }>(`${baseUrl}${apiEndpoint}`, params);
+    const response = await axios.get<{ count: number, rows: Product[] }>(`${baseUrl}${apiEndpoint}`, { params });
 
     return response.data;
   } catch (error) {

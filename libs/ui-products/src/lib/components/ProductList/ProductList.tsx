@@ -7,12 +7,14 @@ import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
 import { SortHeader } from '../SortHeader/SortHeader';
 import { SortHeaderContext } from '../../context';
 import { Table } from 'react-bootstrap';
+import isequal from 'lodash.isequal';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { removeFalsyValues } from '@test-react-app/ui-share';
 
 export const ProductList = () => {
 
   const [sortField, sortFieldSet] = useState('');
+  const [queryParams, queryParamsSet] = useState({});
   const history = useHistory();
   const location = useLocation();
 
@@ -24,8 +26,8 @@ export const ProductList = () => {
     sortFieldSet(field);
 
     const params = removeFalsyValues({
-      sort: field || null,
-      direction: direction || null,
+      sort_field: field || null,
+      sort: direction || null,
     });
 
     const query = new URLSearchParams();
@@ -75,25 +77,38 @@ export const ProductList = () => {
 
   useEffect(() => {
     if (productsStatus === 'idle') {
-      dispatch(fetchProducts({}));
-    }
-  }, [productsStatus, dispatch]);
+      const query = new URLSearchParams(location.search);
+      const params = {};
 
-  // useEffect(() => {
-  //
-  //   console.log('##', location);
-  //   // if (productsStatus === 'succeeded') {
-  //   //   const query = new URLSearchParams(location.search);
-  //   //   const params = {};
-  //   //
-  //   //   query.forEach((value, key) => {
-  //   //     params[key] = value ?? null;
-  //   //   });
-  //   //
-  //   //   dispatch(fetchProducts(removeFalsyValues(params)));
-  //   // }
-  //
-  // }, [dispatch, location]);
+      query.forEach((value, key) => {
+        params[key] = value ?? null;
+      });
+
+      queryParamsSet(params);
+
+      dispatch(fetchProducts(params));
+    }
+  }, [productsStatus, dispatch, location]);
+
+  useEffect(() => {
+
+    if (productsStatus === 'succeeded') {
+
+      const query = new URLSearchParams(location.search);
+      const params = {};
+
+      query.forEach((value, key) => {
+        params[key] = value ?? null;
+      });
+
+      if (!isequal(queryParams, params)) {
+        queryParamsSet(params);
+
+        dispatch(fetchProducts(removeFalsyValues(params)));
+      }
+    }
+
+  }, [dispatch, location, productsStatus, queryParams]);
 
   return (
     <SortHeaderContext.Provider value={sortFieldContext}>

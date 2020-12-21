@@ -1,13 +1,14 @@
 import {
+  EntityAdapter,
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
-  EntityAdapter,
 } from '@reduxjs/toolkit';
 import { Product, ProductState } from './types';
 import { productService } from '../services';
 
 const productsAdapter: EntityAdapter<Product> = createEntityAdapter({
+  selectId: model => model.id,
   sortComparer: (a: Product, b: Product) => b.id.localeCompare(a.id),
 });
 
@@ -16,8 +17,8 @@ const initialState: ProductState = productsAdapter.getInitialState({
   error: null,
 });
 
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async (param: { [key: string]: string }) => {
-  const response: { count: number, rows: Product[] } = await productService.get('/products', { ...param });
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async (params: { [key: string]: string }) => {
+  const response: { count: number, rows: Product[] } = await productService.get('/products', { ...params });
 
   return response.rows;
 });
