@@ -4,5 +4,6 @@ module.exports = {
     '<rootDir>/libs/dictionaries',
     '<rootDir>/libs/ui-share',
     '<rootDir>/libs/ui-products',
+    '<rootDir>/libs/core',
   ],
 };

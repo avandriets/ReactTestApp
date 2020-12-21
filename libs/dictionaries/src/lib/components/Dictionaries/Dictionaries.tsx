@@ -24,7 +24,7 @@ export const Dictionaries: React.FC = () => {
       <path
         d="M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z"/>
     </svg>
-    <span className="ml-2">{collapsed ? null : 'Products'}</span>
+    <span className="ml-2">{collapsed || 'Products'}</span>
   </Nav.Link>;
 
   return (
@@ -37,11 +37,11 @@ export const Dictionaries: React.FC = () => {
       </SideBar>
 
       <Layout>
-        <Switch>
-          <Route path="/dictionaries" exact component={DictionariesDashboard}/>
-          <Route path="/dictionaries/products" exact component={ProductList}/>
-          <Redirect to="/404" />
-        </Switch>
+          <Switch>
+            <Route path="/dictionaries" exact component={DictionariesDashboard}/>
+            <Route path="/dictionaries/products" exact component={ProductList}/>
+            <Redirect to="/404" />
+          </Switch>
       </Layout>
 
     </div>

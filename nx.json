@@ -38,6 +38,9 @@
     },
     "ui-products": {
       "tags": []
+    },
+    "core": {
+      "tags": []
     }
   }
 }
