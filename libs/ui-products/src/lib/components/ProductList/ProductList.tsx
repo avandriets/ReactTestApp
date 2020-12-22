@@ -1,6 +1,9 @@
 import './ProductList.scss';
 import React, { useContext, useEffect, useState } from 'react';
-import { fetchProducts, selectProductIds } from '../../store';
+import {
+  fetchProduct,
+  selectProductIds,
+} from '@test-react-app/ui-products-store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
@@ -86,7 +89,7 @@ export const ProductList = () => {
 
       queryParamsSet(params);
 
-      dispatch(fetchProducts(params));
+      dispatch(fetchProduct(params));
     }
   }, [productsStatus, dispatch, location]);
 
@@ -104,7 +107,7 @@ export const ProductList = () => {
       if (!isequal(queryParams, params)) {
         queryParamsSet(params);
 
-        dispatch(fetchProducts(removeFalsyValues(params)));
+        dispatch(fetchProduct(removeFalsyValues(params)));
       }
     }
 

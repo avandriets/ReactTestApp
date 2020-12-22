@@ -20,7 +20,9 @@
       "@test-react-app/ui-share": ["libs/ui-share/src/index.ts"],
       "@test-react-app/ui-products": ["libs/ui-products/src/index.ts"],
       "@test-react-app/core": ["libs/core/src/index.ts"],
-      "@test-react-app/core-store": ["libs/core-store/src/index.ts"]
+      "@test-react-app/ui-products-store": [
+        "libs/ui-products-store/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

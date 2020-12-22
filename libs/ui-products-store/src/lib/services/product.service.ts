@@ -1,4 +1,4 @@
-import { Product } from '@test-react-app/ui-products';
+import { Product } from '../store';
 import axios from 'axios';
 
 const baseUrl = process.env.NX_BASE_URL;

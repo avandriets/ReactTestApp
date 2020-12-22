@@ -1,9 +1,8 @@
+import './SortHeader.scss';
 import React, { PropsWithChildren, useContext, useState } from 'react';
-import { SortHeaderInterface } from '@test-react-app/core';
 import { arrowDown, arrowUp } from '@test-react-app/ui-share';
 import { SortHeaderContext } from '../../context';
-
-import './SortHeader.scss';
+import { SortHeaderInterface } from '@test-react-app/core';
 
 export const SortHeader: React.FC<SortHeaderInterface> = (props: PropsWithChildren<SortHeaderInterface>) => {
 

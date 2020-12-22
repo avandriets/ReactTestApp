@@ -34,22 +34,16 @@
       "tags": []
     },
     "ui-share": {
-      "tags": [
-        "shared"
-      ]
+      "tags": ["shared"]
     },
     "ui-products": {
       "tags": []
     },
     "core": {
-      "tags": [
-        "shared"
-      ]
+      "tags": ["shared"]
     },
-    "core-store": {
-      "tags": [
-        "shared"
-      ]
+    "ui-products-store": {
+      "tags": []
     }
   }
 }

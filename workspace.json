@@ -184,22 +184,22 @@
         }
       }
     },
-    "core-store": {
-      "root": "libs/core-store",
-      "sourceRoot": "libs/core-store/src",
+    "ui-products-store": {
+      "root": "libs/ui-products-store",
+      "sourceRoot": "libs/ui-products-store/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/core-store/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": ["libs/ui-products-store/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/core-store/jest.config.js",
+            "jestConfig": "libs/ui-products-store/jest.config.js",
             "passWithNoTests": true
           }
         }

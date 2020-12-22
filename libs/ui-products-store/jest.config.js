@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'core-store',
+  displayName: 'ui-products-store',
   preset: '../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -8,5 +8,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/core-store',
+  coverageDirectory: '../../coverage/libs/ui-products-store',
 };

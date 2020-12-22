@@ -2,7 +2,7 @@ import { App } from './app/app';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { store } from '@test-react-app/core-store';
+import { store } from './app/store';
 
 ReactDOM.render(
   <React.StrictMode>
