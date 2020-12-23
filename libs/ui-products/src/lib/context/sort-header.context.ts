@@ -12,6 +12,7 @@ export class SFContext implements SortContext {
 
   public toggleSort(field: string | undefined, direction: string | undefined): void {
     this.sortDirection = this.sortField === field ? direction : 'asc';
+    this.sortDirection = direction;
     this.sortField = field;
   }
 

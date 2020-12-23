@@ -11,12 +11,10 @@ import { SortHeader } from '../SortHeader/SortHeader';
 import { SortHeaderContext } from '../../context';
 import { Table } from 'react-bootstrap';
 import isequal from 'lodash.isequal';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { removeFalsyValues } from '@test-react-app/ui-share';
 
 export const ProductList = () => {
 
-  const [sortField, sortFieldSet] = useState('');
   const [queryParams, queryParamsSet] = useState({});
   const history = useHistory();
   const location = useLocation();
@@ -26,7 +24,6 @@ export const ProductList = () => {
 
   sortFieldContext.toggleSort = (field?: string, direction?: string) => {
     toggleFunc(field, direction);
-    sortFieldSet(field);
 
     const params = removeFalsyValues({
       sort_field: field || null,
@@ -45,70 +42,42 @@ export const ProductList = () => {
   const productsStatus = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
   const error = useSelector((state: { sideBarToggle: any, products: any }) => state.products.error);
 
-  let content;
+  const header = <tr>
+    <SortHeader title="Title" apiField="title" sortable={true}/>
+    <SortHeader title="Category" apiField="category_id" sortable={false}/>
+    <SortHeader title="Description" apiField="description" sortable={true}/>
+  </tr>;
 
-  switch (productsStatus) {
-    case 'loading':
-      content = <div>Loading...</div>
-      break;
-    case 'succeeded':
-      content = productsIds.map((productId) => (
-        <ProductExcerpt key={productId} productId={productId}/>
-      ));
+  const content = productsIds.map((productId) => (
+    <ProductExcerpt key={productId} productId={productId}/>
+  ));
 
-      content =
-        <Table striped bordered hover>
-          <thead>
-          <tr>
-            <SortHeader title="Title" apiField="title" sortable={true} currentSortField={sortField}/>
-            <SortHeader title="Category" apiField="category_id" sortable={false}/>
-            <SortHeader title="Description" apiField="description" sortable={true} currentSortField={sortField}/>
-          </tr>
-          </thead>
-          <tbody>
-          {content}
-          </tbody>
-        </Table>;
-
-      break;
-    case 'error':
-      content = <div>{error}</div>
-      break;
-
-    default:
-  }
+  const table =
+    <Table striped bordered hover>
+      <thead>
+      {header}
+      </thead>
+      <tbody>
+      {content}
+      </tbody>
+    </Table>;
 
   useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const params = {};
+
+    query.forEach((value, key) => {
+      params[key] = value ?? null;
+    });
+
     if (productsStatus === 'idle') {
-      const query = new URLSearchParams(location.search);
-      const params = {};
-
-      query.forEach((value, key) => {
-        params[key] = value ?? null;
-      });
-
       queryParamsSet(params);
-
       dispatch(fetchProduct(params));
     }
-  }, [productsStatus, dispatch, location]);
 
-  useEffect(() => {
-
-    if (productsStatus === 'succeeded') {
-
-      const query = new URLSearchParams(location.search);
-      const params = {};
-
-      query.forEach((value, key) => {
-        params[key] = value ?? null;
-      });
-
-      if (!isequal(queryParams, params)) {
-        queryParamsSet(params);
-
-        dispatch(fetchProduct(removeFalsyValues(params)));
-      }
+    if (productsStatus === 'succeeded' && !isequal(queryParams, params)) {
+      queryParamsSet(params);
+      dispatch(fetchProduct(removeFalsyValues(params)));
     }
 
   }, [dispatch, location, productsStatus, queryParams]);
@@ -117,7 +86,8 @@ export const ProductList = () => {
     <SortHeaderContext.Provider value={sortFieldContext}>
       <div className="m-3">
         <h3>Products list</h3>
-        {content}
+        {productsStatus === 'loading' ? <div>Loading</div> : null}
+        {productsStatus === 'error' ? <div>{error}</div> : table}
       </div>
     </SortHeaderContext.Provider>
   );

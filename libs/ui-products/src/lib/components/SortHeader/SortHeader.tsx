@@ -14,7 +14,7 @@ export const SortHeader: React.FC<SortHeaderInterface> = (props: PropsWithChildr
       return;
     }
 
-    const direction = sort === '' ? 'asc' : sort === 'asc' ? 'desc' : '';
+    const direction = (sort === '' || props.apiField !== headerContext.sortField) ? 'asc' : sort === 'asc' ? 'desc' : '';
     const field = direction !== '' ? props.apiField : '';
 
     sortSet(direction);
