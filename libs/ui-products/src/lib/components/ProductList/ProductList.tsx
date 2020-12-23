@@ -22,6 +22,12 @@ export const ProductList = () => {
   const sortFieldContext = useContext(SortHeaderContext);
   const toggleFunc = sortFieldContext.toggleSort;
 
+  // init header
+  const query = new URLSearchParams(location.search);
+
+  sortFieldContext.sortField = query.get('sort_field') || '';
+  sortFieldContext.sortDirection = query.get('sort') || '';
+
   sortFieldContext.toggleSort = (field?: string, direction?: string) => {
     toggleFunc(field, direction);
 
@@ -42,26 +48,6 @@ export const ProductList = () => {
   const productsStatus = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
   const error = useSelector((state: { sideBarToggle: any, products: any }) => state.products.error);
 
-  const header = <tr>
-    <SortHeader title="Title" apiField="title" sortable={true}/>
-    <SortHeader title="Category" apiField="category_id" sortable={false}/>
-    <SortHeader title="Description" apiField="description" sortable={true}/>
-  </tr>;
-
-  const content = productsIds.map((productId) => (
-    <ProductExcerpt key={productId} productId={productId}/>
-  ));
-
-  const table =
-    <Table striped bordered hover>
-      <thead>
-      {header}
-      </thead>
-      <tbody>
-      {content}
-      </tbody>
-    </Table>;
-
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const params = {};
@@ -81,6 +67,25 @@ export const ProductList = () => {
     }
 
   }, [dispatch, location, productsStatus, queryParams]);
+
+  const header =
+    <tr>
+      <SortHeader title="Title" apiField="title" sortable={true}/>
+      <SortHeader title="Category" apiField="category_id" sortable={false}/>
+      <SortHeader title="Description" apiField="description" sortable={true}/>
+    </tr>;
+
+  const content = productsIds.map((productId) => (<ProductExcerpt key={productId} productId={productId}/>));
+
+  const table =
+    <Table striped bordered hover>
+      <thead>
+      {header}
+      </thead>
+      <tbody>
+      {content}
+      </tbody>
+    </Table>;
 
   return (
     <SortHeaderContext.Provider value={sortFieldContext}>
