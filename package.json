@@ -34,6 +34,7 @@
     "document-register-element": "1.13.1",
     "lodash.isequal": "^4.5.0",
     "react": "17.0.1",
+    "react-bar-loader": "^1.0.0",
     "react-bootstrap": "^1.4.0",
     "react-dom": "17.0.1",
     "react-redux": "^7.2.2",

@@ -8,31 +8,38 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { Product } from './types';
+import { Status } from '@test-react-app/core';
 import { productService } from '../services';
 
 export const PRODUCT_FEATURE_KEY = 'products';
 
 export interface ProductState extends EntityState<Product> {
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: any | null;
+  status: Status;
 }
 
 const productAdapter: EntityAdapter<Product> = createEntityAdapter<Product>();
 
 export const fetchProduct = createAsyncThunk(
   `${PRODUCT_FEATURE_KEY}/fetchProducts`,
-  async (params: { [key: string]: string }) => {
+  async (params: { [key: string]: string }, { rejectWithValue }) => {
+    try {
+      const response: { count: number, rows: Product[] } =
+        await productService.get('/products', { ...params });
 
-    const response: { count: number, rows: Product[] } =
-      await productService.get('/products', { ...params });
-
-    return response.rows;
+      return response.rows;
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
   }
 );
 
 const initialState: ProductState = productAdapter.getInitialState({
-  status: 'idle',
-  error: null,
+  status: {
+    resolved: false,
+    rejected: false,
+    pending: false,
+    err: null,
+  },
 });
 
 const productsSlice = createSlice({
@@ -45,18 +52,30 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProduct.pending, (state: ProductState) => {
-        state.status = 'loading';
+        state.status = {
+          ...state.status,
+          pending: true,
+        };
       })
       .addCase(
         fetchProduct.fulfilled,
         (state: ProductState, action: PayloadAction<Product[]>) => {
           productAdapter.setAll(state, action.payload);
-          state.status = 'succeeded';
+          state.status = {
+            resolved: true,
+              rejected: false,
+              pending: false,
+              err: null,
+          };
         }
       )
       .addCase(fetchProduct.rejected, (state: ProductState, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.status = {
+          resolved: false,
+          rejected: true,
+          pending: false,
+          err: action.payload ? (action.payload as any).message : action.error.message,
+        };
       });
   },
 });

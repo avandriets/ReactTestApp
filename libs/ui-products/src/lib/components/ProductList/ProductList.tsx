@@ -1,6 +1,12 @@
 import './ProductList.scss';
 import { Button, Table } from 'react-bootstrap';
-import { PageLayout, arrowBack, arrowSmallLeft, removeFalsyValues } from '@test-react-app/ui-share';
+import {
+  PageLayout,
+  UiStateLayout,
+  arrowBack,
+  arrowSmallLeft,
+  removeFalsyValues,
+} from '@test-react-app/ui-share';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import {
   fetchProduct,
@@ -12,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
 import { SortHeader } from '../SortHeader/SortHeader';
 import { SortHeaderContext } from '../../context';
+import { Status } from '@test-react-app/core';
 import isequal from 'lodash.isequal';
 
 export const ProductList = () => {
@@ -46,7 +53,7 @@ export const ProductList = () => {
   const dispatch = useDispatch();
   const productsIds = useSelector(selectProductIds);
 
-  const productsStatus = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
+  const productsStatus: Status = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
   const error = useSelector((state: { sideBarToggle: any, products: any }) => state.products.error);
 
   useEffect(() => {
@@ -57,12 +64,12 @@ export const ProductList = () => {
       params[key] = value ?? null;
     });
 
-    if (productsStatus === 'idle') {
+    if (!productsStatus.err && !productsStatus.pending && !productsStatus.rejected && !productsStatus.resolved) {
       queryParamsSet(params);
       dispatch(fetchProduct(params));
     }
 
-    if (productsStatus === 'succeeded' && !isequal(queryParams, params)) {
+    if (productsStatus.resolved && !isequal(queryParams, params)) {
       queryParamsSet(params);
       dispatch(fetchProduct(removeFalsyValues(params)));
     }
@@ -104,14 +111,14 @@ export const ProductList = () => {
             title: <h3>Products list</h3>,
             action: <Button variant="danger">Create</Button>,
             body: (
-              <Fragment>
-                <div>{productsStatus === 'loading' ? <div>Loading</div> : null}</div>
-                <div>{table}</div>
-              </Fragment>
+              <UiStateLayout state={productsStatus}>
+                {{
+                  resolved: table,
+                }}
+              </UiStateLayout>
             ),
           }}
         </PageLayout>
-        {/*{productsStatus === 'error' ? <div>{error}</div> : table}*/}
       </div>
     </SortHeaderContext.Provider>
   );
