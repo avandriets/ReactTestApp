@@ -4,14 +4,13 @@ import React, { Dispatch, useState } from 'react';
 import { arrowLeft, arrowRight } from '../../svg';
 import { collapseSideBar, expandSideBar, selectToggle } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
+import { PropsInterface } from '@test-react-app/core';
 
-type Props = {
-  children: any;
-}
+export const SideBar: React.FC<PropsInterface> = ({ children }) => {
 
-export const SideBar: React.FC<Props> = ({ children }) => {
   const collapsedState = useSelector(selectToggle);
   const dispatch: Dispatch<any> = useDispatch();
+
   const [collapsed, setCollapsed] = useState(collapsedState);
 
   const onToggleClick = React.useCallback(() => {

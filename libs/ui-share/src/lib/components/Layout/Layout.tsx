@@ -1,16 +1,12 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
-
-import { Aux } from '../hoc/Aux';
-
 import './Layout.scss';
+import Container from 'react-bootstrap/Container';
+import { PropsInterface } from '@test-react-app/core';
+import React from 'react';
 
-export const Layout: React.FC = (props: { children }) => {
+export const Layout: React.FC = (props: PropsInterface) => {
   return (
-    <Aux>
-      <Container fluid className="Layout">
-        { props.children }
-      </Container>
-    </Aux>
+    <Container fluid className="Layout">
+      { props.children }
+    </Container>
   );
 };

@@ -1,6 +1,6 @@
 import { Nav, Navbar } from 'react-bootstrap';
-import React from 'react';
 import { LinkContainer } from "react-router-bootstrap";
+import React from 'react';
 
 export const navBar: React.FC = () => {
   return(
