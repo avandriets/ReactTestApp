@@ -1,17 +1,18 @@
 import './ProductList.scss';
-import React, { useContext, useEffect, useState } from 'react';
+import { Button, Table } from 'react-bootstrap';
+import { PageLayout, arrowBack, arrowSmallLeft, removeFalsyValues } from '@test-react-app/ui-share';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import {
   fetchProduct,
   selectProductIds,
 } from '@test-react-app/ui-products-store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
 import { SortHeader } from '../SortHeader/SortHeader';
 import { SortHeaderContext } from '../../context';
-import { Table } from 'react-bootstrap';
 import isequal from 'lodash.isequal';
-import { removeFalsyValues } from '@test-react-app/ui-share';
 
 export const ProductList = () => {
 
@@ -90,9 +91,27 @@ export const ProductList = () => {
   return (
     <SortHeaderContext.Provider value={sortFieldContext}>
       <div className="m-3">
-        <h3>Products list</h3>
-        {productsStatus === 'loading' ? <div>Loading</div> : null}
-        {productsStatus === 'error' ? <div>{error}</div> : table}
+        <PageLayout>
+          {{
+            breadcrumb: (
+              <Fragment>
+                <span className="mr-2">{arrowBack}</span>
+                <span className="mr-2"><Link to="./">Dictionaries</Link></span>
+                <span className="mr-2"> {arrowSmallLeft} </span>
+                <span><Link to="products">Products</Link></span>
+              </Fragment>
+            ),
+            title: <h3>Products list</h3>,
+            action: <Button variant="danger">Create</Button>,
+            body: (
+              <Fragment>
+                <div>{productsStatus === 'loading' ? <div>Loading</div> : null}</div>
+                <div>{table}</div>
+              </Fragment>
+            ),
+          }}
+        </PageLayout>
+        {/*{productsStatus === 'error' ? <div>{error}</div> : table}*/}
       </div>
     </SortHeaderContext.Provider>
   );
