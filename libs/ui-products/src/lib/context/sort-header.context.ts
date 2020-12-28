@@ -26,6 +26,7 @@ export class SFContext implements SortContext {
     this.sortField = query.get('sort_field') || '';
     this.offset = query.get('offset') || '';
     this.limit = query.get('limit') || '';
+    this.sortDirection = query.get('sort') || '';
 
   }
 

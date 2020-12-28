@@ -100,8 +100,13 @@ export const ProductList = () => {
   useEffect(() => {
 
     if (selectedLimit) {
-      const query = new URLSearchParams();
-      query.append('limit', `${selectedLimit.value}`);
+      const query = new URLSearchParams(location.search);
+      if (query.get('limit')) {
+        query.set('limit', `${selectedLimit.value}`);
+      } else {
+        query.append('limit', `${selectedLimit.value}`);
+      }
+
       history.push({ search: query.toString() });
     }
 
@@ -152,10 +157,10 @@ export const ProductList = () => {
   const body = (
     <Fragment>
       <div className="d-flex justify-content-between mb-3">
-        <div>Showing: {offset + 1} - {((offset + 1) + (selectedLimit?.value || pageLimits[0].value)) > total ? total : ((offset + 1) + (selectedLimit?.value || pageLimits[0].value))} of {total}</div>
+        <div>Showing: {offset + 1} - {((offset + 1) + selectedLimit.value) > total ? total : ((offset + 1) + selectedLimit?.value)} of {total}</div>
         <div className="limit">
           <Select options={pageLimits}
-                  defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit) || pageLimits[0]}
+                  defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit)}
                   onChange={setSelectedLimit}>
           </Select>
         </div>
@@ -165,7 +170,7 @@ export const ProductList = () => {
       <div className="d-flex flex-row-reverse">
         <div className="d-flex align-items-center">
           <div
-            className="mb-3 mr-4">Page {(offset / (selectedLimit?.value || pageLimits[0].value)) + 1} of {total / (selectedLimit?.value || pageLimits[0].value)}</div>
+            className="mb-3 mr-4">Page {offset / selectedLimit.value + 1} of {total / selectedLimit.value}</div>
           <Pagination>
             <Pagination.First onClick={() => onPaginationClick('first')}/>
             <Pagination.Prev onClick={() => onPaginationClick('prev')}/>
