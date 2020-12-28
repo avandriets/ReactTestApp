@@ -101,10 +101,15 @@ export const ProductList = () => {
 
     if (selectedLimit) {
       const query = new URLSearchParams(location.search);
+
       if (query.get('limit')) {
         query.set('limit', `${selectedLimit.value}`);
       } else {
         query.append('limit', `${selectedLimit.value}`);
+      }
+
+      if (query.get('offset')) {
+        query.delete('offset');
       }
 
       history.push({ search: query.toString() });
@@ -170,7 +175,7 @@ export const ProductList = () => {
       <div className="d-flex flex-row-reverse">
         <div className="d-flex align-items-center">
           <div
-            className="mb-3 mr-4">Page {offset / selectedLimit.value + 1} of {total / selectedLimit.value}</div>
+            className="mb-3 mr-4">Page {(offset / selectedLimit.value) + 1} of {total / selectedLimit.value}</div>
           <Pagination>
             <Pagination.First onClick={() => onPaginationClick('first')}/>
             <Pagination.Prev onClick={() => onPaginationClick('prev')}/>
