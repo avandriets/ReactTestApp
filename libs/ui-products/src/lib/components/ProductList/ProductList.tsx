@@ -108,7 +108,7 @@ export const ProductList = () => {
         query.append('limit', `${selectedLimit.value}`);
       }
 
-      if (query.get('offset')) {
+      if (query.get('offset') && sortFieldContext.limit !== query.get('limit')) {
         query.delete('offset');
       }
 
@@ -162,7 +162,7 @@ export const ProductList = () => {
   const body = (
     <Fragment>
       <div className="d-flex justify-content-between mb-3">
-        <div>Showing: {offset + 1} - {((offset + 1) + selectedLimit.value) > total ? total : ((offset + 1) + selectedLimit?.value)} of {total}</div>
+        <div>Showing: {offset + 1} - {offset + selectedLimit.value > total ? total : offset + selectedLimit.value} of {total}</div>
         <div className="limit">
           <Select options={pageLimits}
                   defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit)}
@@ -172,10 +172,11 @@ export const ProductList = () => {
       </div>
 
       {table}
+
       <div className="d-flex flex-row-reverse">
         <div className="d-flex align-items-center">
           <div
-            className="mb-3 mr-4">Page {(offset / selectedLimit.value) + 1} of {total / selectedLimit.value}</div>
+            className="mb-3 mr-4">Page {offset / selectedLimit.value + 1} of {total / selectedLimit.value}</div>
           <Pagination>
             <Pagination.First onClick={() => onPaginationClick('first')}/>
             <Pagination.Prev onClick={() => onPaginationClick('prev')}/>
