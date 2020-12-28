@@ -1,40 +1,46 @@
 import './ProductList.scss';
-import { Button, Table } from 'react-bootstrap';
+import { Breadcrumb, Button, Pagination, Table } from 'react-bootstrap';
 import {
   PageLayout,
   UiStateLayout,
-  arrowBack,
-  arrowSmallLeft,
   removeFalsyValues,
 } from '@test-react-app/ui-share';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
+import { SFContext, SortHeaderContext } from '../../context';
 import {
   fetchProduct,
-  selectProductIds,
+  selectProductIds, selectProductsState, selectProductsTotal,
 } from '@test-react-app/ui-products-store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
-import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 import { ProductExcerpt } from '../ProductExcerpt/ProductExcerpt';
+import Select from "react-select";
 import { SortHeader } from '../SortHeader/SortHeader';
-import { SortHeaderContext } from '../../context';
 import { Status } from '@test-react-app/core';
 import isequal from 'lodash.isequal';
 
+const pageLimits = [
+  { value: 5, label: '5' },
+  { value: 10, label: '10' },
+  { value: 20, label: '20' },
+];
+
 export const ProductList = () => {
 
-  const [queryParams, queryParamsSet] = useState({});
   const history = useHistory();
   const location = useLocation();
 
-  const sortFieldContext = useContext(SortHeaderContext);
+  const sortFieldContext = useContext<SFContext>(SortHeaderContext);
+
+  const [queryParams, queryParamsSet] = useState({});
+  const [offset, offsetSet] = useState(null);
+  const [selectedLimit, setSelectedLimit] = useState(pageLimits[0]);
+
   const toggleFunc = sortFieldContext.toggleSort;
 
-  // init header
-  const query = new URLSearchParams(location.search);
-
-  sortFieldContext.sortField = query.get('sort_field') || '';
-  sortFieldContext.sortDirection = query.get('sort') || '';
+  // init params
+  sortFieldContext.init(location.search)
 
   sortFieldContext.toggleSort = (field?: string, direction?: string) => {
     toggleFunc(field, direction);
@@ -44,8 +50,13 @@ export const ProductList = () => {
       sort: direction || null,
     });
 
-    const query = new URLSearchParams();
+    const query = new URLSearchParams(location.search);
     Object.keys(params).forEach(k => query.set(k, params[k]));
+
+    if (!field) {
+      query.delete('sort_field');
+      query.delete('sort');
+    }
 
     history.push({ search: query.toString() });
   };
@@ -53,16 +64,59 @@ export const ProductList = () => {
   const dispatch = useDispatch();
   const productsIds = useSelector(selectProductIds);
 
-  const productsStatus: Status = useSelector((state: { sideBarToggle: any, products: any }) => state.products.status);
-  const error = useSelector((state: { sideBarToggle: any, products: any }) => state.products.error);
+  const productsStatus: Status = useSelector(selectProductsState);
+  const total = useSelector(selectProductsTotal);
+
+  const onPaginationClick = React.useCallback((action: string) => {
+
+    const limit = selectedLimit?.value || 5;
+    const query = new URLSearchParams(location.search);
+
+    let offset = +(query.get('offset') || 0);
+
+    switch (action) {
+      case 'first':
+        offset = 0;
+        break;
+      case 'last':
+        offset = total - limit;
+        break;
+      case 'next':
+        offset += limit;
+        offset = offset >= total ? offset - limit : offset;
+        break;
+      case 'prev':
+        offset -= limit;
+        offset = offset < 0 ? 0 : offset;
+        break;
+    }
+
+    query.set('offset', `${offset}`);
+
+    history.push({ search: query.toString() });
+
+  }, [history, location, selectedLimit, total]);
 
   useEffect(() => {
+
+    if (selectedLimit) {
+      const query = new URLSearchParams();
+      query.append('limit', `${selectedLimit.value}`);
+      history.push({ search: query.toString() });
+    }
+
+  }, [selectedLimit, history]);
+
+  useEffect(() => {
+
     const query = new URLSearchParams(location.search);
     const params = {};
 
     query.forEach((value, key) => {
       params[key] = value ?? null;
     });
+
+    offsetSet(+(query.get('offset') ?? 0));
 
     if (!productsStatus.err && !productsStatus.pending && !productsStatus.rejected && !productsStatus.resolved) {
       queryParamsSet(params);
@@ -95,25 +149,55 @@ export const ProductList = () => {
       </tbody>
     </Table>;
 
+  const body = (
+    <Fragment>
+      <div className="d-flex justify-content-between mb-3">
+        <div>Showing: {offset + 1} - {((offset + 1) + (selectedLimit?.value || pageLimits[0].value)) > total ? total : ((offset + 1) + (selectedLimit?.value || pageLimits[0].value))} of {total}</div>
+        <div className="limit">
+          <Select options={pageLimits}
+                  defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit) || pageLimits[0]}
+                  onChange={setSelectedLimit}>
+          </Select>
+        </div>
+      </div>
+
+      {table}
+      <div className="d-flex flex-row-reverse">
+        <div className="d-flex align-items-center">
+          <div
+            className="mb-3 mr-4">Page {(offset / (selectedLimit?.value || pageLimits[0].value)) + 1} of {total / (selectedLimit?.value || pageLimits[0].value)}</div>
+          <Pagination>
+            <Pagination.First onClick={() => onPaginationClick('first')}/>
+            <Pagination.Prev onClick={() => onPaginationClick('prev')}/>
+            <Pagination.Next onClick={() => onPaginationClick('next')}/>
+            <Pagination.Last onClick={() => onPaginationClick('last')}/>
+          </Pagination>
+        </div>
+      </div>
+    </Fragment>
+  );
   return (
     <SortHeaderContext.Provider value={sortFieldContext}>
       <div className="m-3">
         <PageLayout>
           {{
             breadcrumb: (
-              <Fragment>
-                <span className="mr-2">{arrowBack}</span>
-                <span className="mr-2"><Link to="./">Dictionaries</Link></span>
-                <span className="mr-2"> {arrowSmallLeft} </span>
-                <span><Link to="products">Products</Link></span>
-              </Fragment>
+              <Breadcrumb>
+                <LinkContainer to="/">
+                  <Breadcrumb.Item>Home</Breadcrumb.Item>
+                </LinkContainer>
+                <LinkContainer to="./">
+                  <Breadcrumb.Item>Dictionaries</Breadcrumb.Item>
+                </LinkContainer>
+                <Breadcrumb.Item active>Products</Breadcrumb.Item>
+              </Breadcrumb>
             ),
             title: <h3>Products list</h3>,
             action: <Button variant="danger">Create</Button>,
             body: (
               <UiStateLayout state={productsStatus}>
                 {{
-                  resolved: table,
+                  resolved: body,
                 }}
               </UiStateLayout>
             ),

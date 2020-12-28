@@ -15,6 +15,7 @@ export const PRODUCT_FEATURE_KEY = 'products';
 
 export interface ProductState extends EntityState<Product> {
   status: Status;
+  total: number;
 }
 
 const productAdapter: EntityAdapter<Product> = createEntityAdapter<Product>();
@@ -26,7 +27,7 @@ export const fetchProduct = createAsyncThunk(
       const response: { count: number, rows: Product[] } =
         await productService.get('/products', { ...params });
 
-      return response.rows;
+      return response;
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -40,6 +41,7 @@ const initialState: ProductState = productAdapter.getInitialState({
     pending: false,
     err: null,
   },
+  total: 0,
 });
 
 const productsSlice = createSlice({
@@ -59,14 +61,15 @@ const productsSlice = createSlice({
       })
       .addCase(
         fetchProduct.fulfilled,
-        (state: ProductState, action: PayloadAction<Product[]>) => {
-          productAdapter.setAll(state, action.payload);
+        (state: ProductState, action: PayloadAction<{ count: number, rows: Product[] }>) => {
+          productAdapter.setAll(state, action.payload.rows);
           state.status = {
             resolved: true,
-              rejected: false,
-              pending: false,
-              err: null,
+            rejected: false,
+            pending: false,
+            err: null,
           };
+          state.total = action.payload.count;
         }
       )
       .addCase(fetchProduct.rejected, (state: ProductState, action) => {
@@ -86,7 +89,7 @@ export const productsReducer = productsSlice.reducer;
 // Actions
 export const productsActions = productsSlice.actions;
 
-const { selectAll, selectEntities, selectById, selectIds, selectTotal } = productAdapter.getSelectors();
+const { selectAll, selectEntities, selectById, selectIds } = productAdapter.getSelectors();
 
 // Selectors
 export const getProductsState = (rootState: unknown): ProductState => rootState[PRODUCT_FEATURE_KEY];
@@ -97,7 +100,15 @@ export const selectProductsEntities = createSelector(getProductsState, selectEnt
 
 export const selectProductIds = createSelector(getProductsState, selectIds);
 
-export const selectProductsTotal = createSelector(getProductsState, selectTotal);
-
 export const selectProductEntity =
   (productId) => createSelector(getProductsState, (state) => selectById(state, productId));
+
+export const selectProductsTotal = createSelector(
+  getProductsState,
+  data => data.total,
+);
+
+export const selectProductsState = createSelector(
+  getProductsState,
+  data => data.status,
+);
