@@ -12,7 +12,7 @@ export const ProductExcerpt = ({ productId }) => {
   return (
     <tr key={product.id}>
       <td>
-        <Link to={`/products/${product.id}`}>{product.title}</Link>
+        <Link to={`/dictionaries/products/${product.id}`}>{product.title}</Link>
       </td>
       <td>{product.category_id}</td>
       <td>{product.description}</td>

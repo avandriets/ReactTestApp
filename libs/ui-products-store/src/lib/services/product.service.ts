@@ -11,6 +11,42 @@ async function get(apiEndpoint: string, params: { [key: string]: string }): Prom
 
 }
 
+async function getById(apiEndpoint: string, id: string, params: { [key: string]: string }): Promise<Product> {
+
+  const response = await axios.get<Product>(`${baseUrl}${apiEndpoint}/${id}`, { params });
+
+  return response.data;
+
+}
+
+async function post(apiEndpoint: string, data: any, params: { [key: string]: string }): Promise<Product> {
+
+  const response = await axios.post<Product>(`${baseUrl}${apiEndpoint}`, data, { params });
+
+  return response.data;
+
+}
+
+async function put(apiEndpoint: string, id: string, data: any, params: { [key: string]: string }): Promise<Product> {
+
+  const response = await axios.put<Product>(`${baseUrl}${apiEndpoint}/${id}`, data, { params });
+
+  return response.data;
+
+}
+
+async function del(apiEndpoint: string, id: string, params: { [key: string]: string }): Promise<Product> {
+
+  const response = await axios.delete<Product>(`${baseUrl}${apiEndpoint}/${id}`, { params });
+
+  return response.data;
+
+}
+
 export const productService = {
   get,
+  getById,
+  post,
+  put,
+  del,
 };

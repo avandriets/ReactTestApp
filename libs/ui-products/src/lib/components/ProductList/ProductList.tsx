@@ -8,8 +8,10 @@ import {
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { SFContext, SortHeaderContext } from '../../context';
 import {
-  fetchProduct,
-  selectProductIds, selectProductsState, selectProductsTotal,
+  fetchProducts,
+  selectProductIds,
+  selectProductsState,
+  selectProductsTotal,
 } from '@test-react-app/ui-products-store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
@@ -130,12 +132,12 @@ export const ProductList = () => {
 
     if (!productsStatus.err && !productsStatus.pending && !productsStatus.rejected && !productsStatus.resolved) {
       queryParamsSet(params);
-      dispatch(fetchProduct(params));
+      dispatch(fetchProducts(params));
     }
 
     if (productsStatus.resolved && !isequal(queryParams, params)) {
       queryParamsSet(params);
-      dispatch(fetchProduct(removeFalsyValues(params)));
+      dispatch(fetchProducts(removeFalsyValues(params)));
     }
 
   }, [dispatch, location, productsStatus, queryParams]);
@@ -165,7 +167,7 @@ export const ProductList = () => {
         <div>Showing: {offset + 1} - {offset + selectedLimit.value > total ? total : offset + selectedLimit.value} of {total}</div>
         <div className="limit">
           <Select options={pageLimits}
-                  defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit)}
+                  defaultValue={pageLimits.find(p => p.value === +sortFieldContext.limit) || pageLimits[0]}
                   onChange={setSelectedLimit}>
           </Select>
         </div>
@@ -197,14 +199,16 @@ export const ProductList = () => {
                 <LinkContainer to="/">
                   <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </LinkContainer>
-                <LinkContainer to="./">
+                <LinkContainer to="/dictionaries">
                   <Breadcrumb.Item>Dictionaries</Breadcrumb.Item>
                 </LinkContainer>
                 <Breadcrumb.Item active>Products</Breadcrumb.Item>
               </Breadcrumb>
             ),
             title: <h3>Products list</h3>,
-            action: <Button variant="danger">Create</Button>,
+            action: <LinkContainer to="/dictionaries/products/new">
+              <Button variant="danger">Create</Button>
+            </LinkContainer>,
             body: (
               <UiStateLayout state={productsStatus}>
                 {{
