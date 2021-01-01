@@ -1,5 +1,5 @@
 import './ProductDetails.scss';
-import { Breadcrumb, Button, Form } from 'react-bootstrap';
+import { Breadcrumb, Button, Form, Modal } from 'react-bootstrap';
 import { PageLayout, UiStateLayout, removeFalsyValues } from '@test-react-app/ui-share';
 import {
   Product,
@@ -29,6 +29,8 @@ export const ProductDetails: React.FC<Props> = ({ match: { params: { id } } }) =
   const currentProduct: Product = useSelector(selectProductEntity(id));
   const productStatus: Status = useSelector(selectProductsState);
 
+  const [show, setShow] = useState(false);
+
   const [product, setProduct] = useState<Product>({ id: '', title: '', description: '', category_id: '' });
 
   const onTitleChanged = (e) => setProduct({ ...product, title: e.target.value });
@@ -52,7 +54,14 @@ export const ProductDetails: React.FC<Props> = ({ match: { params: { id } } }) =
     }
   }
 
-  const onDeleteProductClicked = async () => {
+  const handleClose = () => setShow(false);
+
+  const onDeleteProductClicked = () => {
+    setShow(true);
+  }
+
+  const handleDelete = async () => {
+    setShow(false);
     await dispatch(deleteProduct({...product}));
     history.push(`/dictionaries/products`);
   }
@@ -126,6 +135,22 @@ export const ProductDetails: React.FC<Props> = ({ match: { params: { id } } }) =
             </UiStateLayout>
         }}
       </PageLayout>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Deleting product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you ready to delete product "{product.title}"?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 
