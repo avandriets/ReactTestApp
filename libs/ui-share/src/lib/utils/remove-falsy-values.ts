@@ -10,3 +10,16 @@ export const removeFalsyValues = (obj: any) => {
   }, { });
 
 };
+
+export const removeEmptyValues = (obj: any) => {
+
+  return Object.keys(obj).reduce((acc, o) => {
+
+    if (obj[o]) {
+      acc[o] = obj[o];
+    }
+
+    return acc;
+  }, { });
+
+};

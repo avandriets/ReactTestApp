@@ -1,6 +1,6 @@
 import './ProductDetails.scss';
 import { Breadcrumb, Button, Form, Modal } from 'react-bootstrap';
-import { PageLayout, UiStateLayout, removeFalsyValues } from '@test-react-app/ui-share';
+import { PageLayout, UiStateLayout, removeEmptyValues } from '@test-react-app/ui-share';
 import {
   Product,
   createProduct,
@@ -40,7 +40,7 @@ export const ProductDetails: React.FC<Props> = ({ match: { params: { id } } }) =
     if (product.title && product.description) {
 
       let savedProductData;
-      const newProduct = removeFalsyValues({ ...product });
+      const newProduct = removeEmptyValues({ ...product });
 
       if (id === 'new') {
         savedProductData = await dispatch(createProduct({...newProduct, category_id: null}));
@@ -145,7 +145,7 @@ export const ProductDetails: React.FC<Props> = ({ match: { params: { id } } }) =
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleDelete}>
+          <Button variant="danger" onClick={handleDelete}>
             Delete
           </Button>
         </Modal.Footer>
