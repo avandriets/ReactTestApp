@@ -19,7 +19,6 @@
     ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "strict": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
